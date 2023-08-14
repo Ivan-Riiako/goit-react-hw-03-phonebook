@@ -5,17 +5,22 @@ import style from './App.module.css';
 import ContactForm from 'components/ContactForm';
 import Filter from 'components/Filter';
 import ContactList from 'components/ContactList';
+import initialContacts from './contacts.json';
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: initialContacts,
     filter: '',
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    const nextContacts = this.state.contacts;
+    const prevContacts = prevState.contacts;
+
+    if (nextContacts !== prevContacts) {
+      localStorage.setItem('contacts', JSON.stringify(nextContacts));
+    }
+  }
 
   handleSubmit = formState => {
     const { name, number } = formState;
@@ -51,18 +56,17 @@ class App extends Component {
       contact.name.toLowerCase().includes(filterNormalize)
     );
     return findNewArray;
-
-  }
+  };
 
   render() {
-     const { filter } = this.state;
+    const { filter } = this.state;
     const {
       handleSubmit,
       handleChangeFindInput,
       handleDeleteContact,
       makeContactList,
     } = this;
-    const contacts =makeContactList();
+    const contacts = makeContactList();
 
     return (
       <div className={style.section}>
@@ -71,10 +75,7 @@ class App extends Component {
 
         <h2>Contacts</h2>
         <p>Find contacts by name</p>
-        <Filter
-          onFindInput={handleChangeFindInput}
-          inputValueSeach={filter}
-        />
+        <Filter onFindInput={handleChangeFindInput} inputValueSeach={filter} />
         <ContactList
           contactList={contacts}
           onDeleteContact={handleDeleteContact}
@@ -83,6 +84,5 @@ class App extends Component {
     );
   }
 }
-
 
 export default App;
