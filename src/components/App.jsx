@@ -9,19 +9,30 @@ import initialContacts from './contacts.json';
 
 class App extends Component {
   state = {
-    contacts: initialContacts,
+    contacts: [],
     filter: '',
   };
+  componentDidMount(prevProps, prevState) {
+    const todos = localStorage.getItem('contacts');
+    const parseTodos= JSON.parse(todos)
+    // console.log(this.state.contacts);
+   
+      this.setState({ contacts: parseTodos || initialContacts })
+   
+    
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const nextContacts = this.state.contacts;
     const prevContacts = prevState.contacts;
+    // console.log(this.state.contacts);
+    // console.log(`refresh state`);
 
     if (nextContacts !== prevContacts) {
       localStorage.setItem('contacts', JSON.stringify(nextContacts));
+      // console.log(`comparison state`);
     }
   }
-
   handleSubmit = formState => {
     const { name, number } = formState;
     const { contacts } = this.state;
